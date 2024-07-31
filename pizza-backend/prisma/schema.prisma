@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model categories {
+  id         String     @id
+  name       String
+  created_at DateTime?  @default(now())
+  updated_at DateTime?  @default(now())
+  products   products[]
+}
+
+model items {
+  id         String    @id
+  amount     Int
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+  order_id   String
+  product_id String
+  orders     orders    @relation(fields: [order_id], references: [id])
+  products   products  @relation(fields: [product_id], references: [id])
+}
+
+model orders {
+  id         String    @id
+  table      Int
+  status     Boolean   @default(false)
+  draft      Boolean   @default(true)
+  name       String?
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+  items      items[]
+}
+
+model products {
+  id          String     @id
+  name        String
+  price       String
+  description String
+  banner      String
+  created_at  DateTime?  @default(now())
+  updated_at  DateTime?  @default(now())
+  category_id String
+  items       items[]
+  categories  categories @relation(fields: [category_id], references: [id])
+}
+
+model users {
+  id         String    @id
+  name       String
+  email      String
+  password   String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+}
